@@ -18,6 +18,9 @@ class BlockChain {
   }
 
   minePendingTransactions(minerAddress) {
+    const rewardTx = new Transaction(null, minerAddress, this.miningReward);
+    this.pendingTransactions.push(rewardTx);
+
     let newBlock = new Block(
       Date.now(),
       this.pendingTransactions,
@@ -32,8 +35,12 @@ class BlockChain {
     ];
   }
 
-  createTransaction(transaction) {
-    this.pendingTransactions.push(transaction);
+  addTransaction(transaction) {
+    if (transaction.isValid()){
+        this.pendingTransactions.push(transaction);
+    } else {
+        throw new Error("Transaction is invalid");
+    }
   }
 
   getBalance(address) {
@@ -58,15 +65,11 @@ class BlockChain {
       const currentBlock = this.chain[i];
       const prevBlock = this.chain[i - 1];
 
-        if(!currentBlock.)
+      if (!currentBlock.hasValidTransactions()) return false;
 
-      if (currentBlock.hash !== currentBlock.calculateHash()) {
-        return false;
-      }
+      if (currentBlock.hash !== currentBlock.calculateHash()) return false;
 
-      if (currentBlock.prevHash !== prevBlock.hash) {
-        return false;
-      }
+      if (currentBlock.prevHash !== prevBlock.hash) return false;
     }
 
     return true;
